@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IELTS Progress Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+  :root {
+    --color-bg-light: #ffffff;
+    --color-text-light: #374151; /* gray-700 */
+    --color-text-muted-light: #6b7280; /* gray-500 */
+    --color-primary-light: #111827; /* gray-900 */
+    --color-success-light: #10b981; /* green-500 */
+    --color-danger-light: #ef4444; /* red-500 */
+    --color-card-bg-light: #f9fafb; /* gray-50 */
+    --color-shadow-light: rgba(0,0,0,0.05);
+
+    --color-bg-dark: #121212;
+    --color-text-dark: #d1d5db; /* gray-300 */
+    --color-text-muted-dark: #9ca3af; /* gray-400 */
+    --color-primary-dark: #f9fafb;
+    --color-success-dark: #34d399; /* green-400 */
+    --color-danger-dark: #f87171; /* red-400 */
+    --color-card-bg-dark: #1e1e1e;
+    --color-shadow-dark: rgba(0,0,0,0.8);
+
+    --transition-time: 0.3s;
+    --border-radius: 0.75rem;
+    --max-width: 1200px;
+    --font-family-heading: 'Inter', sans-serif;
+    --font-family-body: 'Inter', sans-serif;
+  }
+
+  html {
+    font-size: 16px;
+    font-family: var(--font-family-body);
+    background-color: var(--color-bg-light);
+    color: var(--color-text-light);
+    transition: background-color var(--transition-time), color var(--transition-time);
+  }
+
+  body.dark {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-dark);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    color: var(--color-primary-light);
+    margin: 0 0 1rem 0;
+    transition: color var(--transition-time);
+  }
+  body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
+    color: var(--color-primary-dark);
+  }
+  h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  a {
+    color: var(--color-primary-light);
+    text-decoration: none;
+    transition: color var(--transition-time);
+  }
+  body.dark a {
+    color: var(--color-primary-dark);
+  }
+  a:hover, a:focus {
+    text-decoration: underline;
+  }
+  
+  /* Button base */
+  button, .btn {
+    cursor: pointer;
+    font-family: var(--font-family-body);
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.55rem 1.4rem;
+    transition: background-color var(--transition-time), box-shadow var(--transition-time), transform var(--transition-time);
+    border: none;
+    user-select: none;
+  }
+  button:focus, .btn:focus {
+    outline-offset: 3px;
+    outline: 3px solid var(--color-primary-light);
+  }
+  body.dark button:focus, body.dark .btn:focus {
+    outline-color: var(--color-primary-dark);
+  }
+
+  /* Primary button */
+  .btn-primary {
+    background-color: var(--color-primary-light);
+    color: var(--color-bg-light);
+    box-shadow: 0 4px 8px var(--color-shadow-light);
+  }
+  .btn-primary:hover, .btn-primary:focus-visible {
+    background-color: #000;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+    transform: scale(1.05);
+  }
+  body.dark .btn-primary {
+    background-color: var(--color-primary-dark);
+    color: var(--color-bg-dark);
+    box-shadow: 0 4px 8px var(--color-shadow-dark);
+  }
+  body.dark .btn-primary:hover, body.dark .btn-primary:focus-visible {
+    background-color: #fff;
+    color: var(--color-bg-light);
+  }
+
+  /* Secondary button */
+  .btn-secondary {
+    background-color: transparent;
+    border: 2px solid var(--color-primary-light);
+    color: var(--color-primary-light);
+    box-shadow: none;
+  }
+  .btn-secondary:hover, .btn-secondary:focus-visible {
+    background-color: var(--color-primary-light);
+    color: var(--color-bg-light);
+    box-shadow: 0 4px 8px var(--color-shadow-light);
+    transform: scale(1.05);
+  }
+  body.dark .btn-secondary {
+    border-color: var(--color-primary-dark);
+    color: var(--color-primary-dark);
+  }
+  body.dark .btn-secondary:hover, body.dark .btn-secondary:focus-visible {
+    background-color: var(--color-primary-dark);
+    color: var(--color-bg-dark);
+    box-shadow: 0 4px 8px var(--color-shadow-dark);
+  }
+
+  /* Toggle button for theme */
+  .toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 28px;
+    display: inline-block;
+  }
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background-color: #ccc;
+    border-radius: 20px;
+    transition: background-color var(--transition-time);
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform var(--transition-time);
+  }
+  input:checked + .slider {
+    background-color: var(--color-primary-light);
+  }
+  body.dark input:checked + .slider {
+    background-color: var(--color-primary-dark);
+  }
+  input:checked + .slider:before {
+    transform: translateX(22px);
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.5);
+  }
+
+  input:focus-visible + .slider {
+    outline: none;
+  }
+
+  input[disabled] + .slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  input[disabled] + .slider:before {
+    background-color: #ddd;
+  }
+
+  /* Container */
+  .container {
+    max-width: var(--max-width);
+    margin: auto;
+    padding: 1rem 2rem 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    background-color: var(--color-bg-light);
+    box-shadow: 0 2px 6px var(--color-shadow-light);
+    z-index: 10;
+    transition: background-color var(--transition-time), box-shadow var(--transition-time), color var(--transition-time);
+  }
+  body.dark header {
+    background-color: var(--color-bg-dark);
+    box-shadow: 0 2px 8px var(--color-shadow-dark);
+  }
+
+  .logo {
+    font-family: var(--font-family-heading);
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--color-primary-light);
+    user-select: none;
+  }
+  body.dark .logo {
+    color: var(--color-primary-dark);
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  /* Nav link styled as button for logout with icon */
+  #logout-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.35rem 1rem;
+    border-radius: 0.5rem;
+    background-color: transparent;
+    border: 2px solid var(--color-primary-light);
+    color: var(--color-primary-light);
+    text-decoration: none;
+    user-select: none;
+    transition: background-color var(--transition-time), color var(--transition-time), box-shadow var(--transition-time), transform var(--transition-time);
+  }
+  #logout-link:hover, #logout-link:focus-visible {
+    background-color: var(--color-primary-light);
+    color: var(--color-bg-light);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+    transform: scale(1.05);
+    outline-offset: 3px;
+    outline: none;
+  }
+  body.dark #logout-link {
+    border-color: var(--color-primary-dark);
+    color: var(--color-primary-dark);
+  }
+  body.dark #logout-link:hover, body.dark #logout-link:focus-visible {
+    background-color: var(--color-primary-dark);
+    color: var(--color-bg-dark);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.5);
+  }
+
+  /* Icon for sign out */
+  #logout-link svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  /* Theme toggle container */
+  .theme-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-primary-light);
+  }
+  body.dark .theme-toggle-container {
+    color: var(--color-primary-dark);
+  }
+
+  /* Login Form */
+  #login-screen {
+    max-width: 480px;
+    margin: 8rem auto 0 auto;
+    background-color: var(--color-card-bg-light);
+    padding: 3rem 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 20px var(--color-shadow-light);
+    transition: background-color var(--transition-time);
+  }
+  body.dark #login-screen {
+    background-color: var(--color-card-bg-dark);
+    box-shadow: 0 10px 30px var(--color-shadow-dark);
+  }
+  #login-screen h1 {
+    font-size: 2.25rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Dashboard */
+  #dashboard {
+    display: none;
+    flex-direction: column;
+  }
+  #dashboard.active {
+    display: flex;
+  }
+  
+  /* Tabs for Table/Chart View */
+  .view-tabs {
+    display: flex;
+    margin-bottom: 1rem;
+    user-select: none;
+  }
+  .view-tabs button {
+    flex-grow: 1;
+    border-radius: var(--border-radius);
+    background-color: var(--color-card-bg-light);
+    color: var(--color-text-muted-light);
+    font-weight: 600;
+    border: 1.5px solid transparent;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    transition: background-color var(--transition-time), color var(--transition-time);
+  }
+  .view-tabs button.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-bg-light);
+    box-shadow: 0 4px 8px var(--color-shadow-light);
+  }
+  .view-tabs button:not(.active):hover,
+  .view-tabs button:not(.active):focus-visible {
+    background-color: var(--color-card-bg-light);
+    color: var(--color-primary-light);
+  }
+  body.dark .view-tabs button {
+    background-color: var(--color-card-bg-dark);
+    color: var(--color-text-muted-dark);
+  }
+  body.dark .view-tabs button.active {
+    background-color: var(--color-primary-dark);
+    color: var(--color-bg-dark);
+    box-shadow: 0 4px 8px var(--color-shadow-dark);
+  }
+  body.dark .view-tabs button:not(.active):hover,
+  body.dark .view-tabs button:not(.active):focus-visible {
+    color: var(--color-primary-dark);
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb; /* gray-200 */
+  }
+  body.dark th, body.dark td {
+    border-color: #374151; /* gray-700 */
+  }
+  th {
+    background-color: var(--color-card-bg-light);
+    color: var(--color-text-muted-light);
+    font-weight: 600;
+  }
+  body.dark th {
+    background-color: var(--color-card-bg-dark);
+    color: var(--color-text-muted-dark);
+  }
+
+  /* Colored cells for score status */
+  .score-under {
+    color: var(--color-danger-light);
+    font-weight: 700;
+  }
+  body.dark .score-under {
+    color: var(--color-danger-dark);
+  }
+  .score-target {
+    color: var(--color-success-light);
+    font-weight: 700;
+  }
+  body.dark .score-target {
+    color: var(--color-success-dark);
+  }
+
+  /* Cards */
+  .card {
+    background-color: var(--color-card-bg-light);
+    box-shadow: 0 6px 12px var(--color-shadow-light);
+    border-radius: var(--border-radius);
+    padding: 1rem 1.5rem;
+    margin: 1rem 0 1.5rem 0;
+    transition: background-color var(--transition-time), box-shadow var(--transition-time);
+  }
+  body.dark .card {
+    background-color: var(--color-card-bg-dark);
+    box-shadow: 0 8px 20px var(--color-shadow-dark);
+  }
+
+  /* Score entry form */
+  #score-entry-form {
+    max-width: 600px;
+  }
+
+  /* Flex layouts */
+  .flex-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .flex-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  /* Countdown Timer */
+  #countdown {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-primary-light);
+    transition: color var(--transition-time);
+  }
+  body.dark #countdown {
+    color: var(--color-primary-dark);
+  }
+
+  /* Wrong question types tags */
+  .tag {
+    display: inline-block;
+    background: #e0e7ff; /* blue-100 */
+    color: #4338ca; /* indigo-700 */
+    padding: 0.25rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    margin-right: 0.4rem;
+    margin-top: 0.2rem;
+    user-select: none;
+  }
+  body.dark .tag {
+    background: #3730a3; /* indigo-900 */
+    color: #a5b4fc; /* indigo-300 */
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" tabindex="0" aria-label="IELTS Progress Tracker logo">IELTS Tracker</div>
+  <nav aria-label="Main navigation">
+    <a href="#" id="logout-link" hidden aria-label="Logout" role="button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 13v-2H7V8l-5 4 5 4v-3zM19 19h-7v-2h7v-6h-7V7h7a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2z"/></svg>
+      Logout
+    </a>
+    <div class="theme-toggle-container">
+      <label for="theme-toggle">Dark mode</label>
+      <label class="toggle-switch" aria-label="Toggle dark mode">
+        <input type="checkbox" id="theme-toggle" />
+        <span class="slider"></span>
+      </label>
+    </div>
+  </nav>
+</header>
+
+<main class="container" id="main-content">
+  <section id="login-screen" aria-label="Login screen">
+    <h1>Welcome to IELTS Progress Tracker</h1>
+    <form id="login-form" aria-describedby="login-desc">
+      <div class="form-group">
+        <label for="role-select">I am a</label>
+        <select id="role-select" required aria-required="true">
+          <option value="" disabled selected>Select role</option>
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+      </div>
+      <div class="form-group" id="student-name-group" style="display:none;">
+        <label for="student-name-input">Enter your student name</label>
+        <input type="text" id="student-name-input" autocomplete="off" placeholder="E.g. John Doe" aria-required="true" />
+      </div>
+      <div class="form-group" id="teacher-name-group" style="display:none;">
+        <label for="teacher-name-input">Enter your teacher name</label>
+        <input type="text" id="teacher-name-input" autocomplete="off" placeholder="E.g. Teacher" aria-required="true" />
+      </div>
+      <button type="submit" id="login-button" class="btn btn-primary" disabled>Login</button>
+    </form>
+  </section>
+
+  <section id="dashboard" aria-label="Dashboard" tabindex="0">
+    <h1 id="dashboard-title"></h1>
+    <div id="dashboard-content"></div>
+  </section>
+</main>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+(() => {
+  "use strict";
+
+  const vietnamTimezoneOffsetMin = 7 * 60;
+  const LOCALSTORAGE_KEY = "ieltsData";
+
+  const roleSelect = document.getElementById("role-select");
+  const studentNameGroup = document.getElementById("student-name-group");
+  const studentNameInput = document.getElementById("student-name-input");
+  const teacherNameGroup = document.getElementById("teacher-name-group");
+  const teacherNameInput = document.getElementById("teacher-name-input");
+  const loginForm = document.getElementById("login-form");
+  const loginButton = document.getElementById("login-button");
+  const loginScreen = document.getElementById("login-screen");
+  const dashboard = document.getElementById("dashboard");
+  const dashboardTitle = document.getElementById("dashboard-title");
+  const dashboardContent = document.getElementById("dashboard-content");
+  const logoutLink = document.getElementById("logout-link");
+  const themeToggle = document.getElementById("theme-toggle");
+
+  let currentUser = null;
+  let currentRole = null;
+
+  function saveData(data) {
+    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(data));
+  }
+  function loadData() {
+    const d = localStorage.getItem(LOCALSTORAGE_KEY);
+    if (!d) return { users: {} };
+    try { return JSON.parse(d); } catch { return { users: {} }; }
+  }
+  function generateId() {
+    return Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+  }
+  function formatDateYMD(d) {
+    return d.toLocaleDateString(undefined, { year:'numeric',month:'2-digit',day:'2-digit'});
+  }
+
+  function getVietnamNow() {
+    const nowUTC = new Date(new Date().getTime() + (new Date().getTimezoneOffset() * 60000));
+    let vietnamOffsetMs = vietnamTimezoneOffsetMin * 60 * 1000;
+    return new Date(nowUTC.getTime() + vietnamOffsetMs);
+  }
+
+  function getCountdown(vietnamNow, targetDate) {
+    let diffMs = targetDate.getTime() - vietnamNow.getTime();
+    if(diffMs < 0) return "Exam date passed";
+    let days = Math.floor(diffMs/(1000*60*60*24));
+    let hours = Math.floor((diffMs/(1000*60*60)) % 24);
+    let minutes = Math.floor((diffMs/(1000*60)) % 60);
+    let seconds = Math.floor((diffMs/1000) % 60);
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  function applyTheme(darkMode) {
+    if(darkMode) {
+      document.body.classList.add("dark");
+      themeToggle.checked = true;
+    }
+    else {
+      document.body.classList.remove("dark");
+      themeToggle.checked = false;
+    }
+    localStorage.setItem("ieltsTheme", darkMode ? "dark" : "light");
+  }
+  function initTheme() {
+    const saved = localStorage.getItem("ieltsTheme");
+    if(saved) {
+      applyTheme(saved === "dark");
+    }
+    else {
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      applyTheme(prefersDark);
+    }
+  }
+
+  roleSelect.addEventListener("change", () => {
+    if(roleSelect.value === "student") {
+      studentNameGroup.style.display = "block";
+      teacherNameGroup.style.display = "none";
+    }
+    else if(roleSelect.value === "teacher") {
+      studentNameGroup.style.display = "none";
+      teacherNameGroup.style.display = "block";
+    }
+    else {
+      studentNameGroup.style.display = "none";
+      teacherNameGroup.style.display = "none";
+    }
+    validateLoginForm();
+  });
+  if(roleSelect.value) roleSelect.dispatchEvent(new Event("change"));
+
+  function validateLoginForm() {
+    if(roleSelect.value === "student") {
+      loginButton.disabled = !studentNameInput.value.trim();
+    }
+    else if(roleSelect.value === "teacher") {
+      loginButton.disabled = !teacherNameInput.value.trim();
+    }
+    else {
+      loginButton.disabled = true;
+    }
+  }
+  studentNameInput.addEventListener("input", validateLoginForm);
+  teacherNameInput.addEventListener("input", validateLoginForm);
+
+  loginForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const role = roleSelect.value;
+    let name = null;
+    if(role === "student") name = studentNameInput.value.trim();
+    else if(role === "teacher") name = teacherNameInput.value.trim();
+    if(!name) return;
+
+    const data = loadData();
+    if(!data.users[name]) {
+      if(role === "student") {
+        data.users[name] = {
+          role: "student",
+          targetListening: 6.5,
+          targetReading: 6.5,
+          examDate: null,
+          scores: []
+        };
+      }
+      else if(role === "teacher") {
+        data.users[name] = { role: "teacher" };
+      }
+      saveData(data);
+    }
+    currentUser = name;
+    currentRole = role;
+    showDashboard();
+  });
+
+  logoutLink.addEventListener("click", e => {
+    e.preventDefault();
+    currentUser = null;
+    currentRole = null;
+    dashboard.classList.remove("active");
+    loginScreen.style.display = "block";
+    logoutLink.hidden = true;
+    dashboardContent.innerHTML = "";
+  });
+
+  function showDashboard() {
+    loginScreen.style.display = "none";
+    dashboard.classList.add("active");
+    logoutLink.hidden = false;
+    dashboardTitle.textContent = currentRole === "student" ? `Welcome, ${currentUser}` : `Teacher Dashboard: ${currentUser}`;
+    if(currentRole === "student") {
+      renderStudentDashboard();
+    }
+    else if(currentRole === "teacher") {
+      renderTeacherDashboard();
+    }
+  }
+
+  function renderStudentDashboard() {
+    const data = loadData();
+    const user = data.users[currentUser];
+    if(!user || user.role !== "student") {
+      dashboardContent.innerHTML = "<p>Error loading student data.</p>";
+      return;
+    }
+    dashboardContent.innerHTML = "";
+    const examDateInputId = "exam-date-input";
+    const targetListeningInputId = "target-listening-input";
+    const targetReadingInputId = "target-reading-input";
+
+    const examDateSection = document.createElement("div");
+    examDateSection.className = "card";
+    examDateSection.innerHTML = `
+      <h3>Exam and Target Scores</h3>
+      <form id="exam-target-form" aria-label="Exam date and target scores form">
+        <div class="form-group">
+          <label for="${examDateInputId}">IELTS Exam Date</label>
+          <input type="date" id="${examDateInputId}" name="examDate" aria-describedby="exam-date-desc" />
+          <small id="exam-date-desc" style="color:var(--color-text-muted-light);">Set your IELTS exam date for countdown timer.</small>
+        </div>
+        <div class="flex-row">
+          <div class="form-group" style="flex:1;">
+            <label for="${targetListeningInputId}">Target Listening Band</label>
+            <input type="number" id="${targetListeningInputId}" name="targetListening" min="1" max="9" step="0.5" required />
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label for="${targetReadingInputId}">Target Reading Band</label>
+            <input type="number" id="${targetReadingInputId}" name="targetReading" min="1" max="9" step="0.5" required />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 0.8rem;">Save Targets</button>
+      </form>
+    `;
+    dashboardContent.appendChild(examDateSection);
+
+    const form = document.createElement("form");
+    form.id = "score-entry-form";
+    form.setAttribute("aria-label", "Score entry form");
+
+    form.innerHTML = `
+      <h3>Enter Your Test Score</h3>
+      <div class="form-group">
+        <label for="test-name-input">Test Name</label>
+        <input type="text" id="test-name-input" autocomplete="off" required placeholder="e.g. IELTS Listening Test 1" />
+      </div>
+      <div class="form-group">
+        <label for="test-type-select">Test Type</label>
+        <select id="test-type-select" required>
+          <option value="" disabled selected>Select test type</option>
+          <option value="Listening">Listening</option>
+          <option value="Reading">Reading</option>
+        </select>
+      </div>
+      <div class="flex-row">
+        <div class="form-group" style="flex:1;">
+          <label for="correct-num-input">Number Correct</label>
+          <input type="number" id="correct-num-input" min="0" max="40" required placeholder="0-40" />
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label for="band-input">IELTS Band</label>
+          <input type="number" id="band-input" min="0" max="9" step="0.5" required placeholder="e.g. 6.5" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="wrong-questions-input">Types of Questions Wrong (comma separated)</label>
+        <input type="text" id="wrong-questions-input" autocomplete="off" placeholder="e.g. Multiple choice, Fill in the blanks"/>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top: 0.8rem;">Add Score</button>
+    `;
+    dashboardContent.appendChild(form);
+
+    const viewTabs = document.createElement("div");
+    viewTabs.className = "view-tabs";
+    viewTabs.setAttribute("role", "tablist");
+    viewTabs.innerHTML = `
+      <button role="tab" id="view-table-tab" aria-selected="true" aria-controls="scores-table-section" tabindex="0" class="active">Table View</button>
+      <button role="tab" id="view-chart-tab" aria-selected="false" aria-controls="scores-chart-section" tabindex="-1">Line Chart</button>
+    `;
+    dashboardContent.appendChild(viewTabs);
+
+    const countdownDiv = document.createElement("div");
+    countdownDiv.id = "countdown";
+    countdownDiv.setAttribute("aria-live", "polite");
+    dashboardContent.appendChild(countdownDiv);
+
+    const scoresTableSection = document.createElement("section");
+    scoresTableSection.id = "scores-table-section";
+    scoresTableSection.setAttribute("role","tabpanel");
+    scoresTableSection.setAttribute("aria-labelledby", "view-table-tab");
+    scoresTableSection.setAttribute("aria-hidden", "false");
+    dashboardContent.appendChild(scoresTableSection);
+
+    const scoresChartSection = document.createElement("section");
+    scoresChartSection.id = "scores-chart-section";
+    scoresChartSection.setAttribute("role","tabpanel");
+    scoresChartSection.setAttribute("aria-labelledby", "view-chart-tab");
+    scoresChartSection.style.display = "none";
+    scoresChartSection.setAttribute("aria-hidden", "true");
+    dashboardContent.appendChild(scoresChartSection);
+
+    const viewTableTab = viewTabs.querySelector("#view-table-tab");
+    const viewChartTab = viewTabs.querySelector("#view-chart-tab");
+    viewTableTab.addEventListener("click", () => {
+      viewTableTab.classList.add("active");
+      viewChartTab.classList.remove("active");
+      viewTableTab.setAttribute("aria-selected","true");
+      viewChartTab.setAttribute("aria-selected","false");
+      viewTableTab.tabIndex = 0;
+      viewChartTab.tabIndex = -1;
+      scoresTableSection.style.display = "";
+      scoresChartSection.style.display = "none";
+      scoresTableSection.setAttribute("aria-hidden", "false");
+      scoresChartSection.setAttribute("aria-hidden", "true");
+      scoresChartSection.innerHTML = "";
+      renderScoresTable();
+    });
+    viewChartTab.addEventListener("click", () => {
+      viewTableTab.classList.remove("active");
+      viewChartTab.classList.add("active");
+      viewTableTab.setAttribute("aria-selected","false");
+      viewChartTab.setAttribute("aria-selected","true");
+      viewTableTab.tabIndex = -1;
+      viewChartTab.tabIndex = 0;
+      scoresTableSection.style.display = "none";
+      scoresChartSection.style.display = "";
+      scoresTableSection.setAttribute("aria-hidden", "true");
+      scoresChartSection.setAttribute("aria-hidden", "false");
+      renderScoresChart();
+    });
+
+    document.getElementById(examDateInputId).value = user.examDate || "";
+    document.getElementById(targetListeningInputId).value = user.targetListening || "";
+    document.getElementById(targetReadingInputId).value = user.targetReading || "";
+
+    document.getElementById("exam-target-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const examDateVal = document.getElementById(examDateInputId).value;
+      const targetListeningVal = parseFloat(document.getElementById(targetListeningInputId).value);
+      const targetReadingVal = parseFloat(document.getElementById(targetReadingInputId).value);
+      if((!examDateVal) || isNaN(targetListeningVal) || isNaN(targetReadingVal)) {
+        alert("Please fill all target fields correctly.");
+        return;
+      }
+      user.examDate = examDateVal;
+      user.targetListening = targetListeningVal;
+      user.targetReading = targetReadingVal;
+      data.users[currentUser] = user;
+      saveData(data);
+      alert("Targets saved!");
+      renderCountdown();
+      renderScoresTable();
+    });
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const testName = form.querySelector("#test-name-input").value.trim();
+      const testType = form.querySelector("#test-type-select").value;
+      const correct = parseInt(form.querySelector("#correct-num-input").value);
+      const band = parseFloat(form.querySelector("#band-input").value);
+      const wrongTypesRaw = form.querySelector("#wrong-questions-input").value.trim();
+      if(!testName || !testType || isNaN(correct) || isNaN(band)) {
+        alert("Please fill all required fields correctly.");
+        return;
+      }
+      const wrongTypes = wrongTypesRaw ? wrongTypesRaw.split(",").map(s => s.trim()).filter(s => s.length > 0) : [];
+
+      const newScore = {
+        id: generateId(),
+        testName,
+        testType,
+        correct,
+        band,
+        wrongTypes,
+        date: Date.now()
+      };
+      user.scores.push(newScore);
+      data.users[currentUser] = user;
+      saveData(data);
+
+      form.reset();
+      form.querySelector("#test-type-select").value = "";
+
+      alert("Score added!");
+      renderScoresTable();
+      if(document.getElementById("view-chart-tab").classList.contains("active")) {
+        renderScoresChart();
+      }
+    });
+
+    let countdownInterval = null;
+    function renderCountdown() {
+      const countdown = document.getElementById("countdown");
+      if(!user.examDate) {
+        countdown.textContent = "Please set your IELTS exam date above.";
+        return;
+      }
+      const parts = user.examDate.split("-");
+      if(parts.length !== 3) {
+        countdown.textContent = "Invalid exam date format.";
+        return;
+      }
+      let examDateUtc = new Date(Date.UTC(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])));
+      let examDateVT = new Date(examDateUtc.getTime() + vietnamTimezoneOffsetMin * 60 * 1000);
+
+      function updateCountdown() {
+        const nowVT = getVietnamNow();
+        countdown.textContent = "Countdown to IELTS Exam: " + getCountdown(nowVT, examDateVT);
+      }
+      updateCountdown();
+
+      if(countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
+    function renderScoresTable() {
+      const section = document.getElementById("scores-table-section");
+      if(!section) return;
+      if(!user.scores.length) {
+        section.innerHTML = "<p>No scores logged yet.</p>";
+        return;
+      }
+
+      const scoresSorted = [...user.scores].sort((a,b) => a.date - b.date);
+
+      let html = "<table><thead><tr>" +
+        "<th>Test Name</th><th>Type</th><th>Date</th><th>Correct</th><th>Band</th><th>Target</th><th>Status</th><th>Types of Wrong Questions</th>" +
+        "</tr></thead><tbody>";
+
+      scoresSorted.forEach(s => {
+        let targetBand = (s.testType === "Listening") ? user.targetListening : user.targetReading;
+        if(typeof targetBand !== "number" || isNaN(targetBand)) targetBand = 0;
+        let statusClass = s.band >= targetBand ? "score-target" : "score-under";
+        let statusText = s.band >= targetBand ? "Beyond Target" : "Under Target";
+        let wrongTypesTags = s.wrongTypes.length
+          ? s.wrongTypes.map(wt => `<span class="tag">${escapeHtml(wt)}</span>`).join(" ")
+          : "<em>None</em>";
+        const d = new Date(s.date);
+        html += `<tr>
+          <td>${escapeHtml(s.testName)}</td>
+          <td>${escapeHtml(s.testType)}</td>
+          <td>${formatDateYMD(d)}</td>
+          <td>${s.correct}</td>
+          <td>${s.band.toFixed(1)}</td>
+          <td>${targetBand.toFixed(1)}</td>
+          <td class="${statusClass}" aria-label="${statusText}">${statusText}</td>
+          <td>${wrongTypesTags}</td>
+        </tr>`;
+      });
+
+      html += "</tbody></table>";
+      section.innerHTML = html;
+    }
+
+    function renderScoresChart() {
+      const section = document.getElementById("scores-chart-section");
+      if(!section) return;
+      if(!user.scores.length) {
+        section.innerHTML = "<p>No scores logged yet.</p>";
+        return;
+      }
+      section.innerHTML = `<canvas id="scores-chart-canvas" aria-label="Scores progress line chart" role="img"></canvas>`;
+
+      const ctx = document.getElementById("scores-chart-canvas").getContext("2d");
+
+      const scoresSorted = [...user.scores].sort((a,b) => a.date - b.date);
+      const listeningScores = scoresSorted.filter(s => s.testType === "Listening");
+      const readingScores = scoresSorted.filter(s => s.testType === "Reading");
+
+      const allDates = Array.from(new Set(scoresSorted.map(s => formatDateYMD(new Date(s.date)))));
+      allDates.sort((a,b) => (new Date(a)) - (new Date(b)));
+
+      function mapDateToBand(scores) {
+        const map = {};
+        scores.forEach(s => {
+          const d = formatDateYMD(new Date(s.date));
+          map[d] = s.band;
+        });
+        return map;
+      }
+      const listeningMap = mapDateToBand(listeningScores);
+      const readingMap = mapDateToBand(readingScores);
+
+      const targetListening = (typeof user.targetListening === "number" && !isNaN(user.targetListening)) ? user.targetListening : 0;
+      const targetReading = (typeof user.targetReading === "number" && !isNaN(user.targetReading)) ? user.targetReading : 0;
+
+      const listeningData = allDates.map(d => {
+        const b = listeningMap[d];
+        return (b === undefined) ? null : b;
+      });
+      const readingData = allDates.map(d => {
+        const b = readingMap[d];
+        return (b === undefined) ? null : b;
+      });
+
+      function pointColors(data, target) {
+        return data.map(v => {
+          if(v === null || typeof v !== "number") return 'rgba(0,0,0,0)';
+          return v >= target ? 'rgba(16,185,129,0.8)' : 'rgba(239,68,68,0.8)';
+        });
+      }
+
+      if(window.scoresChartInstance) {
+        window.scoresChartInstance.destroy();
+        window.scoresChartInstance = null;
+      }
+
+      window.scoresChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: allDates,
+          datasets: [
+            {
+              label: 'Listening Band',
+              data: listeningData,
+              borderColor: 'rgba(16,185,129,0.9)',
+              backgroundColor: 'rgba(16,185,129,0.4)',
+              borderWidth: 2,
+              fill: false,
+              spanGaps: true,
+              pointBackgroundColor: pointColors(listeningData, targetListening),
+              pointRadius: 6,
+              tension: 0.3,
+            },
+            {
+              label: 'Reading Band',
+              data: readingData,
+              borderColor: 'rgba(59,130,246,0.9)',
+              backgroundColor: 'rgba(59,130,246,0.4)',
+              borderWidth: 2,
+              fill: false,
+              spanGaps: true,
+              pointBackgroundColor: pointColors(readingData, targetReading),
+              pointRadius: 6,
+              tension: 0.3,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 600,
+            easing: 'easeOutCubic'
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 9,
+              ticks: {
+                stepSize: 0.5,
+                color: getComputedStyle(document.body).color,
+              },
+              title: {
+                display: true,
+                text: 'Band Score',
+                color: getComputedStyle(document.body).color,
+                font: {weight: '600'}
+              },
+              grid: {
+                color: getComputedStyle(document.body).color,
+                borderDash: [4,4]
+              }
+            },
+            x: {
+              ticks: {
+                color: getComputedStyle(document.body).color,
+                maxRotation: 45,
+                minRotation: 45,
+                autoSkip: true,
+                maxTicksLimit: 10
+              },
+              title: {
+                display: true,
+                text: 'Test Date',
+                color: getComputedStyle(document.body).color,
+                font: {weight: '600'}
+              },
+              grid: {
+                color: getComputedStyle(document.body).color,
+                borderDash: [2,3]
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: getComputedStyle(document.body).color,
+                font: {weight: '600'}
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => ctx.dataset.label + ": " + ctx.parsed.y
+              }
+            }
+          }
+        }
+      });
+      ctx.canvas.style.height = "320px";
+    }
+
+    renderCountdown();
+    renderScoresTable();
+  }
+
+  function renderTeacherDashboard() {
+    const data = loadData();
+    const users = data.users;
+    dashboardContent.innerHTML = "";
+    const teacher = users[currentUser];
+    if(!teacher || teacher.role !== "teacher") {
+      dashboardContent.innerHTML = "<p>Error loading teacher data.</p>";
+      return;
+    }
+
+    const heading = document.createElement("h2");
+    heading.textContent = "All Students' Scores";
+    dashboardContent.appendChild(heading);
+
+    const tableDiv = document.createElement("div");
+    tableDiv.style.overflowX = "auto";
+    dashboardContent.appendChild(tableDiv);
+
+    const tbl = document.createElement("table");
+    tbl.setAttribute("aria-label", "All students scores summary table");
+    const thead = document.createElement("thead");
+    thead.innerHTML = `
+      <tr>
+        <th>Student Name</th>
+        <th>Exam Date</th>
+        <th>Target Listening Band</th>
+        <th>Target Reading Band</th>
+        <th>Scores Logged</th>
+        <th>Avg Listening Band</th>
+        <th>Avg Reading Band</th>
+      </tr>
+    `;
+    tbl.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+
+    const students = Object.entries(users).filter(([name,user]) => user.role === "student");
+
+    for(const [studentName, user] of students) {
+      const scores = user.scores || [];
+      if(!scores.length) {
+        tbody.innerHTML += `
+          <tr>
+            <td>${escapeHtml(studentName)}</td>
+            <td>${user.examDate || "-"}</td>
+            <td>${user.targetListening ? user.targetListening.toFixed(1) : "-"}</td>
+            <td>${user.targetReading ? user.targetReading.toFixed(1) : "-"}</td>
+            <td>0</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+        `;
+        continue;
+      }
+      let listeningBands = scores.filter(s => s.testType === "Listening").map(s => s.band);
+      let readingBands = scores.filter(s => s.testType === "Reading").map(s => s.band);
+      let avgListening = listeningBands.length ? (listeningBands.reduce((a,b)=>a+b,0) / listeningBands.length) : null;
+      let avgReading = readingBands.length ? (readingBands.reduce((a,b)=>a+b,0) / readingBands.length) : null;
+      tbody.innerHTML += `
+        <tr>
+          <td>${escapeHtml(studentName)}</td>
+          <td>${user.examDate || "-"}</td>
+          <td>${user.targetListening ? user.targetListening.toFixed(1) : "-"}</td>
+          <td>${user.targetReading ? user.targetReading.toFixed(1) : "-"}</td>
+          <td>${scores.length}</td>
+          <td>${avgListening !== null ? avgListening.toFixed(2) : "-"}</td>
+          <td>${avgReading !== null ? avgReading.toFixed(2) : "-"}</td>
+        </tr>
+      `;
+    }
+
+    tbl.appendChild(tbody);
+    tableDiv.appendChild(tbl);
+  }
+
+  function escapeHtml(text) {
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+  }
+
+  themeToggle.addEventListener("change", () => {
+    applyTheme(themeToggle.checked);
+  });
+
+  function init() {
+    initTheme();
+    loginScreen.style.display = "block";
+    dashboard.classList.remove("active");
+    logoutLink.hidden = true;
+  }
+  init();
+})();
+</script>
+</body>
+</html>
+
